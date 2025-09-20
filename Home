@@ -1,1 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maht Stop | Financial Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .sidebar {
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen font-sans">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="sidebar bg-gray-800 text-white w-64 min-h-screen p-4 hidden md:block">
+            <div class="flex items-center space-x-2 mb-8">
+                <i data-feather="shopping-bag" class="text-blue-400"></i>
+                <h1 class="text-xl font-bold">Maht Stop</h1>
+            </div>
+            <nav>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="dashboard.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700 bg-gray-700">
+                            <i data-feather="home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="transactions.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="dollar-sign"></i>
+                            <span>Transactions</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="inventory.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="package"></i>
+                            <span>Inventory</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reports.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="bar-chart-2"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="employees.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="users"></i>
+                            <span>Employees</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="openAdminModal()" class="w-full flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="lock"></i>
+                            <span>Admin Login</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Financial Dashboard</h1>
+                <div class="md:hidden">
+                    <button id="menuBtn" class="text-gray-700">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Current Balance</p>
+                            <h2 class="text-2xl font-bold text-red-600">-$4,663.52</h2>
+                        </div>
+                        <i data-feather="dollar-sign" class="text-red-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Updated: Today</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Total Expenses</p>
+                            <h2 class="text-2xl font-bold">$8,247.84</h2>
+                        </div>
+                        <i data-feather="trending-down" class="text-blue-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Last 30 days</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Total Deposits</p>
+                            <h2 class="text-2xl font-bold text-green-600">$3,584.32</h2>
+                        </div>
+                        <i data-feather="trending-up" class="text-green-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Last 30 days</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Inventory Value</p>
+                            <h2 id="inventoryValue" class="text-2xl font-bold">$0.00</h2>
+                        </div>
+                        <i data-feather="box" class="text-purple-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Updated: <span id="inventoryUpdateTime">Just now</span></p>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-md font-semibold mb-2">Expense Breakdown</h3>
+                    <div class="w-full h-64">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-md font-semibold mb-2">Monthly Trend</h3>
+                    <div class="w-full h-64">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">Recent Transactions</h3>
+                    <a href="transactions.html" class="text-blue-500 hover:underline">View All</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">09/16/25</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Coca-Cola Invoice</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Inventory</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-red-600">-$380.49</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">09/12/25</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Sam's Club Purchase</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Inventory</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-red-600">-$667.88</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">09/10/25</td>
+                                <td class="px-6 py-4 whitespace-nowrap">August Adult Labor</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Labor</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-red-600">-$180.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">09/08/25</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Cash Deposit</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Deposit</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-green-600">$1,347.55</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Admin Login</h3>
+                <button onclick="closeAdminModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="password">Password</label>
+                <input type="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex justify-end">
+                <button onclick="loginAdmin()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize AOS
+        AOS.init();
+        
+        // Initialize Feather Icons
+        feather.replace();
+        
+        // Mobile menu toggle
+        document.getElementById('menuBtn').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+        
+        // Admin modal functions
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+        
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+        
+        function loginAdmin() {
+            const password = document.getElementById('password').value;
+            if (password === "Marketing@98") {
+                window.location.href = "admin.html";
+            } else {
+                alert("Incorrect password. Please try again.");
+            }
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const employees = JSON.parse(localStorage.getItem('employees')) || [];
+
+            // Calculate inventory value
+            let inventoryValue = 0;
+            inventory.forEach(item => {
+                inventoryValue += (item.quantity || 0) * (item.unitPrice || 0);
+            });
+
+            // Update inventory value display
+            document.getElementById('inventoryValue').textContent = `${inventoryValue.toFixed(2)}`;
+            document.getElementById('inventoryUpdateTime').textContent = new Date().toLocaleTimeString();
+
+            // Update charts and tables with new data
+            updateCharts();
+            updateRecentTransactions(transactions);
+        }
+
+        function updateCharts() {
+            // Update chart data here
+        }
+
+        function updateRecentTransactions(transactions) {
+            // Update recent transactions table
+        }
+
+        // Listen for data updates
+        window.addEventListener('dataUpdated', loadData);
+        
+        // Initial load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            // Expense Breakdown Chart
+            const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+            const expenseChart = new Chart(expenseCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Inventory', 'Labor', 'Food', 'Supplies', 'Other'],
+                    datasets: [{
+                        data: [3560.42, 360.00, 354.37, 67.61, 27.89],
+                        backgroundColor: [
+                            '#3B82F6',
+                            '#10B981',
+                            '#F59E0B',
+                            '#8B5CF6',
+                            '#EC4899'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    },
+                    animation: {
+                        duration: 0
+                    }
+                }
+            });
+            
+            // Monthly Trend Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            const trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Aug 20', 'Aug 25', 'Aug 31', 'Sep 5', 'Sep 10', 'Sep 16'],
+                    datasets: [
+                        {
+                            label: 'Balance',
+                            data: [-2937.75, -2981.31, -2335.14, -1906.28, -2086.28, -4663.52],
+                            borderColor: '#EF4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Deposits',
+                            data: [0, 0, 706.77, 0, 0, 0],
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    },
+                    animation: {
+                        duration: 0
+                    },
+                    elements: {
+                        point: {
+                            radius: 0
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
