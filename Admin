@@ -1,1 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maht Stop | Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .sidebar {
+            transition: all 0.3s;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen font-sans">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="sidebar bg-gray-800 text-white w-64 min-h-screen p-4 hidden md:block">
+            <div class="flex items-center space-x-2 mb-8">
+                <i data-feather="shopping-bag" class="text-blue-400"></i>
+                <h1 class="text-xl font-bold">Maht Stop</h1>
+            </div>
+            <nav>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="index.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="transactions.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="dollar-sign"></i>
+                            <span>Transactions</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="inventory.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="package"></i>
+                            <span>Inventory</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reports.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="bar-chart-2"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="employees.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                            <i data-feather="users"></i>
+                            <span>Employees</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="admin.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-700 bg-gray-700">
+                            <i data-feather="lock"></i>
+                            <span>Admin Panel</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Admin Panel</h1>
+                <div class="md:hidden">
+                    <button id="menuBtn" class="text-gray-700">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Add New Transaction</p>
+                            <h2 class="text-2xl font-bold text-blue-600">Record Expense/Income</h2>
+                        </div>
+                        <i data-feather="plus-circle" class="text-blue-400"></i>
+                    </div>
+                    <button onclick="openTransactionModal()" class="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Add Transaction
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Inventory Management</p>
+                            <h2 class="text-2xl font-bold text-purple-600">Update Stock</h2>
+                        </div>
+                        <i data-feather="package" class="text-purple-400"></i>
+                    </div>
+                    <button onclick="openInventoryModal()" class="mt-4 w-full px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600">
+                        Manage Inventory
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Employee Management</p>
+                            <h2 class="text-2xl font-bold text-green-600">Staff Records</h2>
+                        </div>
+                        <i data-feather="users" class="text-green-400"></i>
+                    </div>
+                    <button onclick="openEmployeeModal()" class="mt-4 w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+                        Manage Employees
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <i data-feather="file-text" class="text-blue-500 mb-2"></i>
+                        <span>Generate Report</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <i data-feather="download" class="text-green-500 mb-2"></i>
+                        <span>Export Data</span>
+                    </button>
+                    <button onclick="openDeleteInventoryModal()" class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <i data-feather="trash-2" class="text-red-500 mb-2"></i>
+                        <span>Delete Inventory</span>
+                    </button>
+                    <button onclick="openDeleteTransactionModal()" class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <i data-feather="dollar-sign" class="text-red-500 mb-2"></i>
+                        <span>Delete Transaction</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Recent Admin Activity</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 p-2 rounded-full mr-4">
+                            <i data-feather="edit" class="text-blue-500"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Added new transaction</p>
+                            <p class="text-sm text-gray-500">Domino's Pizza - $72.02 - 2 minutes ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-purple-100 p-2 rounded-full mr-4">
+                            <i data-feather="package" class="text-purple-500"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Updated inventory</p>
+                            <p class="text-sm text-gray-500">Added 50 Hot Dog Buns - 1 hour ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-green-100 p-2 rounded-full mr-4">
+                            <i data-feather="user" class="text-green-500"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Added new employee</p>
+                            <p class="text-sm text-gray-500">John Doe - Cashier - 3 hours ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Inventory Modal -->
+    <div id="deleteInventoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Delete Inventory Item</h3>
+                <button onclick="closeDeleteInventoryModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Item Name</label>
+                    <input type="text" id="deleteInventoryItem" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter item name to delete">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeDeleteInventoryModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button onclick="deleteInventoryItem()" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
+                        Delete Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Transaction Modal -->
+    <div id="deleteTransactionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Delete Transaction</h3>
+                <button onclick="closeDeleteTransactionModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Transaction ID</label>
+                    <input type="number" id="deleteTransactionId" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter transaction ID to delete">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeDeleteTransactionModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button onclick="deleteTransaction()" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
+                        Delete Transaction
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Add New Transaction</h3>
+                <button onclick="closeTransactionModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Date</label>
+                    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Description</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter description">
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Category</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option>Inventory</option>
+                        <option>Labor</option>
+                        <option>Food</option>
+                        <option>Supplies</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Type</label>
+                    <div class="flex space-x-4">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="type" class="form-radio text-red-500" checked>
+                            <span class="ml-2">Expense</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="type" class="form-radio text-green-500">
+                            <span class="ml-2">Deposit</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Amount</label>
+                    <input type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="0.00">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeTransactionModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button onclick="saveTransaction()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Save Transaction
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div id="inventoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Manage Inventory</h3>
+                <button onclick="closeInventoryModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Item Name</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter item name">
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Category</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option>Food</option>
+                        <option>Beverage</option>
+                        <option>Supplies</option>
+                        <option>Equipment</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Quantity</label>
+                        <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Unit Price</label>
+                        <input type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeInventoryModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button onclick="saveInventory()" class="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600">
+                        Update Inventory
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Modal -->
+    <div id="employeeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Manage Employee</h3>
+                <button onclick="closeEmployeeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Employee Name</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter name">
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Position</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option>Cashier</option>
+                        <option>Manager</option>
+                        <option>Inventory Specialist</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Hourly Rate</label>
+                    <input type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="0.00">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeEmployeeModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button onclick="saveEmployee()" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+                        Save Employee
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize AOS
+        AOS.init();
+        
+        // Initialize Feather Icons
+        feather.replace();
+        
+        // Mobile menu toggle
+        document.getElementById('menuBtn').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+        
+        // Modal functions
+        function openTransactionModal() {
+            document.getElementById('transactionModal').classList.remove('hidden');
+        }
+        
+        function closeTransactionModal() {
+            document.getElementById('transactionModal').classList.add('hidden');
+        }
+        
+        function openInventoryModal() {
+            document.getElementById('inventoryModal').classList.remove('hidden');
+        }
+        
+        function closeInventoryModal() {
+            document.getElementById('inventoryModal').classList.add('hidden');
+        }
+        
+        function openEmployeeModal() {
+            document.getElementById('employeeModal').classList.remove('hidden');
+        }
+        
+        function closeEmployeeModal() {
+            document.getElementById('employeeModal').classList.add('hidden');
+        }
+
+        // Delete Modals
+        function openDeleteInventoryModal() {
+            document.getElementById('deleteInventoryModal').classList.remove('hidden');
+        }
+        
+        function closeDeleteInventoryModal() {
+            document.getElementById('deleteInventoryModal').classList.add('hidden');
+        }
+        
+        function openDeleteTransactionModal() {
+            document.getElementById('deleteTransactionModal').classList.remove('hidden');
+        }
+        
+        function closeDeleteTransactionModal() {
+            document.getElementById('deleteTransactionModal').classList.add('hidden');
+        }
+
+        // Delete functions
+        function deleteInventoryItem() {
+            const itemName = document.getElementById('deleteInventoryItem').value;
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            
+            const updatedInventory = inventory.filter(item => item.name !== itemName);
+            localStorage.setItem('inventory', JSON.stringify(updatedInventory));
+            
+            updateAllPages();
+            alert('Inventory item deleted successfully!');
+            closeDeleteInventoryModal();
+        }
+
+        function deleteTransaction() {
+            const transactionId = document.getElementById('deleteTransactionId').value;
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            
+            const updatedTransactions = transactions.filter((_, index) => index !== parseInt(transactionId));
+            localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+            
+            updateAllPages();
+            alert('Transaction deleted successfully!');
+            closeDeleteTransactionModal();
+        }
+
+        // Save functions
+        function saveTransaction() {
+            const date = document.querySelector('#transactionModal input[type="date"]').value;
+            const description = document.querySelector('#transactionModal input[type="text"]').value;
+            const category = document.querySelector('#transactionModal select').value;
+            const type = document.querySelector('#transactionModal input[type="radio"]:checked').value;
+            const amount = document.querySelector('#transactionModal input[type="number"]').value;
+
+            if (!date || !description || !amount) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            // Store transaction in localStorage
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            const newTransaction = {
+                date,
+                description,
+                category,
+                type,
+                amount: parseFloat(amount),
+                balance: 0 // Will be calculated
+            };
+            transactions.push(newTransaction);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            // Update all pages
+            updateAllPages();
+
+            alert('Transaction saved successfully!');
+            closeTransactionModal();
+        }
+
+        function updateAllPages() {
+            // This would trigger updates on all pages
+            // In a real app, you would use a state management solution or server-side updates
+            const event = new Event('dataUpdated');
+            window.dispatchEvent(event);
+        }
+
+        function saveInventory() {
+            const itemName = document.querySelector('#inventoryModal input[type="text"]').value;
+            const category = document.querySelector('#inventoryModal select').value;
+            const quantity = document.querySelector('#inventoryModal input[type="number"]').value;
+            const unitPrice = document.querySelectorAll('#inventoryModal input[type="number"]')[1].value;
+
+            if (!itemName || !quantity || !unitPrice) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            // Store inventory in localStorage
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const existingItemIndex = inventory.findIndex(item => item.name === itemName);
+            
+            if (existingItemIndex >= 0) {
+                inventory[existingItemIndex] = {
+                    name: itemName,
+                    category,
+                    quantity: parseInt(quantity),
+                    unitPrice: parseFloat(unitPrice)
+                };
+            } else {
+                inventory.push({
+                    name: itemName,
+                    category,
+                    quantity: parseInt(quantity),
+                    unitPrice: parseFloat(unitPrice)
+                });
+            }
+
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            
+            // Calculate and store inventory value
+            let inventoryValue = 0;
+            inventory.forEach(item => {
+                inventoryValue += (item.quantity || 0) * (item.unitPrice || 0);
+            });
+            localStorage.setItem('inventoryValue', inventoryValue.toString());
+
+            updateAllPages();
+            alert('Inventory updated successfully!');
+            closeInventoryModal();
+        }
+
+        function saveEmployee() {
+            const name = document.querySelector('#employeeModal input[type="text"]').value;
+            const position = document.querySelector('#employeeModal select').value;
+            const rate = document.querySelector('#employeeModal input[type="number"]').value;
+
+            if (!name || !position || !rate) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            // Store employee in localStorage
+            const employees = JSON.parse(localStorage.getItem('employees')) || [];
+            const existingEmployeeIndex = employees.findIndex(emp => emp.name === name);
+            
+            if (existingEmployeeIndex >= 0) {
+                employees[existingEmployeeIndex] = {
+                    name,
+                    position,
+                    rate: parseFloat(rate)
+                };
+            } else {
+                employees.push({
+                    name,
+                    position,
+                    rate: parseFloat(rate)
+                });
+            }
+
+            localStorage.setItem('employees', JSON.stringify(employees));
+            updateAllPages();
+
+            alert('Employee saved successfully!');
+            closeEmployeeModal();
+        }
+    </script>
+</body>
+</html>
